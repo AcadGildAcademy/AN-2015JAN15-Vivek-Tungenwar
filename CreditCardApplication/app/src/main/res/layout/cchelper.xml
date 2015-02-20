@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#ff000000">
+
+    <LinearLayout
+    android:orientation="horizontal"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="5dp">
+
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/entercardbalance"
+        android:id="@+id/textenterbalance"
+        android:layout_weight="@integer/abc_max_action_buttons"
+        android:textColor="@android:color/background_light" />
+
+    <EditText
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:inputType="numberDecimal"
+        android:id="@+id/et_enterbalance"
+        android:background="#ffe8e8e8" />
+
+</LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/interestrate"
+            android:id="@+id/textrate"
+            android:layout_weight="@integer/abc_max_action_buttons"
+            android:textColor="@android:color/background_light" />
+
+        <EditText
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
+            android:inputType="numberDecimal"
+            android:id="@+id/et_rate"
+            android:background="#ffe8e8e8" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/monthlypayment"
+            android:id="@+id/textminpayment"
+            android:layout_weight="@integer/abc_max_action_buttons"
+            android:textColor="@android:color/background_light" />
+
+        <EditText
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
+            android:inputType="numberDecimal"
+            android:id="@+id/et_minpayment"
+            android:background="#ffe8e8e8" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginBottom="5dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/cardbalance"
+            android:id="@+id/textfinalcardbalance"
+            android:layout_weight="@integer/abc_max_action_buttons"
+            android:textColor="@android:color/background_light" />
+
+        <EditText
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/et_finalcardbalance"
+            android:focusable="false"
+            android:cursorVisible="false"
+            android:background="#ffe8e8e8"
+            android:inputType="numberDecimal" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/monthsremaining"
+            android:id="@+id/textmonthsremaining"
+            android:layout_weight="@integer/abc_max_action_buttons"
+            android:textColor="@android:color/background_light" />
+
+        <EditText
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
+            android:focusable="false"
+            android:cursorVisible="false"
+            android:id="@+id/et_monthsremaining"
+            android:background="#ffe8e8e8"
+            android:inputType="numberDecimal" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/nterestpaid"
+            android:id="@+id/textinterestpaid"
+            android:layout_weight="@integer/abc_max_action_buttons"
+            android:textColor="@android:color/background_light" />
+
+        <EditText
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
+            android:focusable="false"
+            android:cursorVisible="false"
+            android:id="@+id/et_interestpaid"
+            android:background="#ffe8e8e8"
+            android:inputType="number" />
+
+    </LinearLayout>
+
+    <Button
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/bt_compute"
+        android:id="@+id/bt_compute"
+        android:layout_marginTop="20dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginBottom="5dp"
+        android:layout_marginLeft="5dp"
+        android:background="@android:color/background_light" />
+
+    <Button
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/bt_clear"
+        android:id="@+id/bt_clear"
+        android:layout_margin="5dp"
+        android:background="@android:color/background_light" />
+</LinearLayout>
