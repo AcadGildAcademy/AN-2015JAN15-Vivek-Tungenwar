@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">My Application</string>
+    <string name="T_1">Red</string>
+    <string name="T_2">Orange</string>
+    <string name="T_3">Yellow</string>
+    <string name="T_4">Green</string>
+    <string name="T_5">Blue</string>
+    <string name="T_6">Indigo</string>
+    <string name="T_7">Violet</string>
+</resources>
