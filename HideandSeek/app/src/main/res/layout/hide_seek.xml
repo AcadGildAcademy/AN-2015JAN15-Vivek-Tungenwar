@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
+
+        <TextView
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:id="@+id/text_hide_seek"
+            android:layout_gravity="center_horizontal"
+            android:layout_above="@+id/bt_hide_seek"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="45dp"
+            android:background="@android:drawable/btn_star_big_off"
+            android:visibility="visible" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/bt_hide"
+            android:id="@+id/bt_hide_seek"
+            android:layout_gravity="center_horizontal"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true" />
+    </RelativeLayout>
+</LinearLayout>
