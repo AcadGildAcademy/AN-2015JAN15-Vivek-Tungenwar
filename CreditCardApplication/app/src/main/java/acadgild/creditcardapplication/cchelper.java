@@ -35,9 +35,9 @@ public class cchelper extends Activity {
                 principal=Double.parseDouble(balance.getText().toString());
                 rate=Double.parseDouble(interest.getText().toString());
                 monthlyfloatInterestPaid= Double.valueOf(Math.round((principal * (rate / (100 * 12)))));
-                if(minimum_payment>principal)
+                if(minimum_payment>=principal+monthlyfloatInterestPaid)
                 {
-                    minimum_payment=principal;
+                    minimum_payment=principal+monthlyfloatInterestPaid;
                 }
                 monthlyPrinciple= minimum_payment-monthlyfloatInterestPaid;
                 monthlybalance=principal-monthlyPrinciple;
@@ -46,9 +46,9 @@ public class cchelper extends Activity {
                 while(monthlybalance>0)
                 {
                     monthlyfloatInterestPaid= Double.valueOf(Math.round((monthlybalance * (rate / (100 * 12)))));
-                    if(minimum_payment>monthlybalance)
+                    if(minimum_payment>=monthlybalance+monthlyfloatInterestPaid)
                     {
-                        minimum_payment=monthlybalance;
+                        minimum_payment=monthlybalance+monthlyfloatInterestPaid;
                     }
                     monthlyPrinciple= minimum_payment-monthlyfloatInterestPaid;
                     monthlybalance=monthlybalance-monthlyPrinciple;
@@ -57,6 +57,17 @@ public class cchelper extends Activity {
                 }
                 months.setText(Integer.toString(cnt));
                 interestpaid.setText(Double.toString(totalinterest));
+            }
+        });
+        clear.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                balance.setText("");
+                interest.setText("");
+                payment.setText("");
+                f_balance.setText("");
+                interestpaid.setText("");
+                months.setText("");
             }
         });
     }
