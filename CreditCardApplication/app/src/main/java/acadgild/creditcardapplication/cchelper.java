@@ -27,14 +27,14 @@ public class cchelper extends Activity {
         compute.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int monthlyfloatInterestPaid,monthlyPrinciple;
-                int minimum_payment,principal,rate,monthlybalance,totalinterest;
+                Double monthlyfloatInterestPaid,monthlyPrinciple;
+                Double minimum_payment,principal,rate,monthlybalance,totalinterest;
                 int cnt=1;
                 String value;
-                minimum_payment=Integer.parseInt(payment.getText().toString());
-                principal=Integer.parseInt(balance.getText().toString());
-                rate=Integer.parseInt(interest.getText().toString());
-                monthlyfloatInterestPaid= Math.round((principal * (rate / (100 * 12))));
+                minimum_payment=Double.parseDouble(payment.getText().toString());
+                principal=Double.parseDouble(balance.getText().toString());
+                rate=Double.parseDouble(interest.getText().toString());
+                monthlyfloatInterestPaid= Double.valueOf(Math.round((principal * (rate / (100 * 12)))));
                 if(minimum_payment>principal)
                 {
                     minimum_payment=principal;
@@ -42,10 +42,10 @@ public class cchelper extends Activity {
                 monthlyPrinciple= minimum_payment-monthlyfloatInterestPaid;
                 monthlybalance=principal-monthlyPrinciple;
                 totalinterest=monthlyfloatInterestPaid;
-                f_balance.setText(monthlybalance);
+                f_balance.setText(Double.toString(monthlybalance));
                 while(monthlybalance>0)
                 {
-                    monthlyfloatInterestPaid= Math.round((monthlybalance * (rate / (100 * 12))));
+                    monthlyfloatInterestPaid= Double.valueOf(Math.round((monthlybalance * (rate / (100 * 12)))));
                     if(minimum_payment>monthlybalance)
                     {
                         minimum_payment=monthlybalance;
@@ -55,8 +55,8 @@ public class cchelper extends Activity {
                     cnt++;
                     totalinterest=totalinterest+monthlyfloatInterestPaid;
                 }
-                months.setText(new Integer(cnt).toString());
-                interestpaid.setText(totalinterest);
+                months.setText(Integer.toString(cnt));
+                interestpaid.setText(Double.toString(totalinterest));
             }
         });
     }
