@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <Button
+        android:layout_width="@dimen/width"
+        android:layout_height="@dimen/Height"
+        android:text="@string/bt_apps"
+        android:id="@+id/bt_app"
+        android:layout_margin="@dimen/margin"
+        android:layout_gravity="center_horizontal" />
+
+    <Button
+        android:layout_width="@dimen/width"
+        android:layout_height="@dimen/Height"
+        android:text="@string/bt_settings"
+        android:id="@+id/bt_setting"
+        android:layout_margin="@dimen/margin"
+        android:layout_gravity="center_horizontal" />
+
+    <Button
+        android:layout_width="@dimen/width"
+        android:layout_height="@dimen/Height"
+        android:text="@string/bt_vibrate"
+        android:id="@+id/bt_vibrate"
+        android:layout_margin="@dimen/margin"
+        android:layout_gravity="center_horizontal" />
+</LinearLayout>
