@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Working with Menus</string>
+    <string name="menu1">Search</string>
+    <string name="menu2">Video</string>
+</resources>
