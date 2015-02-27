@@ -17,6 +17,20 @@ public class MainActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Button b;
+        b=(Button)findViewById(R.id.bt_start);
+        b.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i=new Intent(MainActivity.this,UserSettingActivity.class);
+                startActivityForResult(i,1);
+            }
+        });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
         String  settings = "";
         settings=settings+"Password: " + sharedPrefs.getString("prefUserPassword", "NOPASSWORD");
@@ -25,22 +39,10 @@ public class MainActivity extends ActionBarActivity {
         TextView t;
         t=(TextView)findViewById(R.id.textView);
         t.setText(settings);
-        Button b;
-        b=(Button)findViewById(R.id.bt_start);
-        b.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i=new Intent(MainActivity.this,UserSettingActivity.class);
-                startActivity(i);
-            }
-        });
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 

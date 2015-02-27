@@ -3,16 +3,16 @@
     <EditTextPreference
         android:title="Password"
         android:summary="Set Your Password"
-        android:key="prefUserPassword"></EditTextPreference>
+        android:key="prefUserPassword"/>
     <CheckBoxPreference
         android:defaultValue="false"
         android:key="prefLockScreen"
         android:summary="Lock The Screen With Password"
-        android:title="Screen Lock"></CheckBoxPreference>
+        android:title="Screen Lock"/>
     <ListPreference
         android:key="prefUpdateFrequency"
         android:title="Reminder for Updation"
         android:summary="Set Update Reminder Frequency"
         android:entries="@array/updateFrequency"
-        android:entryValues="@array/updateFrequencyValues"></ListPreference>
+        android:entryValues="@array/updateFrequencyValues"/>
 </PreferenceScreen>
