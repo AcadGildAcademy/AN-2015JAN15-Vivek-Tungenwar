@@ -27,87 +27,43 @@ public class ssa extends Activity {
         bt.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    async1 task1=new async1();
+                    async task1=new async(pb1);
                     task1.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-                    async2 task2=new async2();
+                    async task2=new async(pb2);
                     task2.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-                    async3 task3=new async3();
+                    async task3=new async(pb3);
                     task3.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-                    async4 task4=new async4();
+                    async task4=new async(pb4);
                     task4.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                 }
             });
     }
 
-    class async1 extends AsyncTask<String, String, String>
+    class async extends AsyncTask<String, Integer, String>
+    {
+        ProgressBar asyncprogress;
+        async(ProgressBar pb)
         {
+            asyncprogress=pb;
+        }
             @Override
             protected String doInBackground(String... params) {
                 for(int i=1;i<=pb1.getMax();i++)
                 {
-                    publishProgress(Integer.toString(i));
+                    publishProgress(i);
+                    try {
+                        Thread.sleep(2000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
                 return null;
             }
 
             @Override
-            protected void onProgressUpdate(String... values) {
+            protected void onProgressUpdate(Integer... values) {
                 super.onProgressUpdate(values);
-                pb1.setProgress(Integer.parseInt(values[0]));
-            }
-        }
-
-    class async2 extends AsyncTask<String, String, String>
-        {
-            @Override
-            protected String doInBackground(String... params) {
-                for(int i=1;i<=pb2.getMax();i++)
-                {
-                    publishProgress(Integer.toString(i));
-                }
-                return null;
-            }
-
-            @Override
-            protected void onProgressUpdate(String... values) {
-                super.onProgressUpdate(values);
-                pb2.setProgress(Integer.parseInt(values[0]));
+                asyncprogress.setProgress(values[0]);
             }
     }
-
-    class async3 extends AsyncTask<String, String, String>
-    {
-            @Override
-            protected String doInBackground(String... params) {
-                for(int i=1;i<=pb3.getMax();i++)
-                {
-                    publishProgress(Integer.toString(i));
-                }
-                return null;
-            }
-
-            @Override
-            protected void onProgressUpdate(String... values) {
-                super.onProgressUpdate(values);
-                pb3.setProgress(Integer.parseInt(values[0]));
-            }
-    }
-
-    class async4 extends AsyncTask<String, String, String>
-        {
-            @Override
-            protected String doInBackground(String... params) {
-                for(int i=1;i<=pb4.getMax();i++)
-                {
-                    publishProgress(Integer.toString(i));
-                }
-                return null;
-            }
-
-            @Override
-            protected void onProgressUpdate(String... values) {
-                super.onProgressUpdate(values);
-                pb4.setProgress(Integer.parseInt(values[0]));
-            }
-        }
 }

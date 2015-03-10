@@ -23,17 +23,26 @@ import java.io.OutputStreamWriter;
 public class readwritejava extends Activity {
     Button addData,Delete;
     EditText txtData;
-    TextView showData=(TextView)findViewById(R.id.textView2);
+    TextView showData;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.readwritefile);
+        showData=(TextView)findViewById(R.id.textView2);
         addData=(Button)findViewById(R.id.addData);
+        Delete=(Button)findViewById(R.id.button);
         addData.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 async a=new async();
                 a.execute("started");
+            }
+        });
+        Delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                File myFile = new File(String.valueOf(Environment.getExternalStorageDirectory().getAbsolutePath())+File.separator+"test.txt");
+                myFile.delete();
             }
         });
     }
@@ -67,7 +76,6 @@ public class readwritejava extends Activity {
             File txtFile=new File(String.valueOf(Environment.getExternalStorageDirectory().getAbsolutePath())+File.separator+"test.txt");
             try
             {
-                txtFile.createNewFile();
                 FileOutputStream fout=new FileOutputStream(txtFile);
                 OutputStreamWriter output=new OutputStreamWriter(fout);
                 output.append(txtData.getText());
