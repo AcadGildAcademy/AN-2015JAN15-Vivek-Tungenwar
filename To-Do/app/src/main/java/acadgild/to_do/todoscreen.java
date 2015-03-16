@@ -28,6 +28,7 @@ import java.lang.reflect.Array;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -60,13 +61,55 @@ public class todoscreen extends ActionBarActivity {
         listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                if(generateData().get(position)._status=="0") {
-                    db.updateStatus(generateData().get(position));
-                    Intent intent = getIntent();
-                    finish();
-                    startActivity(intent);
-                }
+                db.updateStatus(generateData().get(position));
+                Intent intent = getIntent();
+                finish();
+                startActivity(intent);
                 return false;
+            }
+        });
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Calendar cal=Calendar.getInstance();
+                cal.setTime(generateData().get(position)._date1);
+                LayoutInflater li = LayoutInflater.from(context);
+                View promptsView = li.inflate(R.layout.dialog, null);
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+                alertDialogBuilder.setView(promptsView);
+                final EditText Title = (EditText) promptsView.findViewById(R.id.et_dialog1);
+                final EditText Description = (EditText) promptsView.findViewById(R.id.et_dialog2);
+                final DatePicker Date = (DatePicker) promptsView.findViewById(R.id.datePicker);
+                Title.setText(generateData().get(position).getTitle());
+                Description.setText(generateData().get(position).getDescription());
+                Date.updateDate(cal.get(Calendar.YEAR),cal.get(Calendar.MONTH),cal.get(Calendar.DAY_OF_MONTH));
+                alertDialogBuilder
+                        .setCancelable(false)
+                        .setPositiveButton("Save", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                if (Title.getText().toString().trim().length() == 0 || Description.getText().toString().trim().length() == 0) {
+                                    Toast.makeText(context, "Set a Title & Description", Toast.LENGTH_LONG).show();
+                                } else {
+                                    String s = String.valueOf(Date.getDayOfMonth()) + "/" + String.valueOf(Date.getMonth() + 1) + "/" + String.valueOf(Date.getYear());
+                                    Reminders reminder = new Reminders();
+                                    reminder._title = Title.getText().toString();
+                                    reminder._description = Description.getText().toString();
+                                    reminder._date = s;
+                                    reminder._status = "0";
+                                    db.addReminder(reminder);
+                                    Intent intent = getIntent();
+                                    finish();
+                                    startActivity(intent);
+                                    dialog.dismiss();
+                                }
+                            }
+                        })
+                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                            }
+                        });
+                alertDialogBuilder.show();
             }
         });
     }

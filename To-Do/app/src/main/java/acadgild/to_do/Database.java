@@ -133,7 +133,12 @@ public class Database extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(KEY_STATUS, 1);
+        if(contact._status.equals("0")) {
+            values.put(KEY_STATUS, 1);
+        }
+        else{
+            values.put(KEY_STATUS, 0);
+        }
 
         // updating row
         return db.update(TABLE_REMINDERS, values, KEY_ID + " = ?",

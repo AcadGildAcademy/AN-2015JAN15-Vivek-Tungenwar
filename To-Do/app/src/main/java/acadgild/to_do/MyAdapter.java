@@ -45,7 +45,7 @@ public class MyAdapter extends ArrayAdapter<Reminders> {
         ImageView image=(ImageView)rowView.findViewById(R.id.imageView);
 
         // 4. Set the text for textView
-        listTitle.setText(itemsArrayList.get(position).getDate().toString());
+        listTitle.setText(itemsArrayList.get(position).getDate());
         Title.setText(itemsArrayList.get(position).getTitle());
         Description.setText(itemsArrayList.get(position).getDescription());
         Date.setText(itemsArrayList.get(position).getDate());
