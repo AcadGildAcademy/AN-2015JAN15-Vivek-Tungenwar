@@ -1,23 +1,23 @@
 package acadgild.to_do;
 
+import java.util.Date;
+
 /**
  * Created by Tungenwar on 12/03/2015.
  */
 public class Reminders {
 
     //private variables
-    int _id;
-    String _title;
-    String _description;
-    String _date;
-    int _status;
+    String _id,_status;
+    String _title,_description,_date;
+    //Date _date;
 
     // Empty constructor
     public Reminders(){
 
     }
     // constructor
-    public Reminders(int id, String _title, String _description, String _date, int _status){
+    public Reminders(String id, String _title, String _description, String _date, String _status){
         this._id = id;
         this._title = _title;
         this._description = _description;
@@ -26,19 +26,19 @@ public class Reminders {
     }
 
     // constructor
-    public Reminders(String _title, String _description, String _date, int _status){
+    public Reminders(String _title, String _description, String _date, String _status){
         this._title = _title;
         this._description = _description;
         this._date=_date;
         this._status=_status;
     }
     // getting ID
-    public int getID(){
+    public String getID(){
         return this._id;
     }
 
     // setting id
-    public void setID(int id){
+    public void setID(String id){
         this._id = id;
     }
 
@@ -69,12 +69,12 @@ public class Reminders {
         this._date = date;
     }
 
-    public int getStatus(){
+    public String getStatus(){
         return this._status;
     }
 
     // setting id
-    public void setStatus(int status){
+    public void setStatus(String status){
         this._status = status;
     }
 }

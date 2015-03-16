@@ -6,7 +6,10 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import java.text.ParsePosition;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -72,18 +75,19 @@ public class Database extends SQLiteOpenHelper {
         db.close(); // Closing database connection
     }
 
-    // Getting single contact
+    // Getting single reminder
     Reminders getReminders(int id) {
         SQLiteDatabase db = this.getReadableDatabase();
-
+        SimpleDateFormat sdf=new SimpleDateFormat("d/m/yyyy");
+        ParsePosition pos = new ParsePosition(0);
         Cursor cursor = db.query(TABLE_REMINDERS, new String[] { KEY_ID,
                         KEY_TITLE}, KEY_ID + "=?",
                 new String[] { String.valueOf(id) }, null, null, null, null);
         if (cursor != null)
             cursor.moveToFirst();
 
-        Reminders reminders = new Reminders(Integer.parseInt(cursor.getString(0)),
-                cursor.getString(1), cursor.getString(2),cursor.getString(3),Integer.parseInt(cursor.getString(4)));
+        Reminders reminders = new Reminders(cursor.getString(0),
+                cursor.getString(1), cursor.getString(2),cursor.getString(3),cursor.getString(4));
         // return contact
         return reminders;
     }
@@ -93,29 +97,30 @@ public class Database extends SQLiteOpenHelper {
         List<Reminders> remindersList = new ArrayList<Reminders>();
         // Select All Query
         String selectQuery = "SELECT  * FROM " + TABLE_REMINDERS;
-
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
 
+        SimpleDateFormat sdf=new SimpleDateFormat("d/m/yyyy");
+        ParsePosition pos = new ParsePosition(0);
         // looping through all rows and adding to list
         if (cursor.moveToFirst()) {
             do {
                 Reminders reminders = new Reminders();
-                reminders.setID(Integer.parseInt(cursor.getString(0)));
+                reminders.setID(cursor.getString(0));
                 reminders.setTitle(cursor.getString(1));
                 reminders.setDescription(cursor.getString(2));
                 reminders.setDate(cursor.getString(3));
-                reminders.setStatus(Integer.parseInt(cursor.getString(4)));
+                reminders.setStatus(cursor.getString(4));
                 // Adding contact to list
                 remindersList.add(reminders);
             } while (cursor.moveToNext());
         }
 
-        // return contact list
+        // return reminders list
         return remindersList;
     }
 
-    // Updating single contact
+    // Updating single reminder
     public int updateContact(Reminders contact) {
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -128,11 +133,23 @@ public class Database extends SQLiteOpenHelper {
                 new String[] { String.valueOf(contact.getID()) });
     }
 
-    // Deleting single contact
-    public void deleteContact(Reminders contact) {
+    // Updating Status
+    public int updateStatus(Reminders contact) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(KEY_STATUS, 1);
+
+        // updating row
+        return db.update(TABLE_REMINDERS, values, KEY_ID + " = ?",
+                new String[] { String.valueOf(contact.getID()) });
+    }
+
+    // Deleting single reminder
+    public void deleteReminder(Reminders contact) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_REMINDERS, KEY_ID + " = ?",
-                new String[] { String.valueOf(contact.getID()) });
+                new String[] { contact.getID() });
         db.close();
     }
 

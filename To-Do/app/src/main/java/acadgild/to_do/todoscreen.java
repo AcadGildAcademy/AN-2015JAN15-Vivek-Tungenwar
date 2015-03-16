@@ -1,19 +1,35 @@
 package acadgild.to_do;
 
 import android.app.ActionBar;
+import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.text.AndroidCharacter;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 
+import java.lang.reflect.Array;
+import java.text.ParsePosition;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
@@ -21,62 +37,69 @@ import java.util.List;
  * Created by Tungenwar on 12/03/2015.
  */
 public class todoscreen extends ActionBarActivity {
+    Database db=new Database(this);
+    ListView listView;
+    MyAdapter adapter;
+    Context context=this;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.todolist);
 
-        Database db=new Database(this);
-        // Reading all contacts
-        Log.d("Reading: ", "Reading all contacts..");
-        List<Reminders> reminder = db.getAllReminders();
-
-        for (Reminders cn : reminder) {
-            String log = "Id: "+cn.getID()+" ,Title: " + cn.getTitle() + " ,Description: " + cn.getDescription() + " ,Date: " + cn.getDate() + " ,Status: " + cn.getStatus();
-            // Writing Contacts to log
-            Log.d("Title: ", log);
-
-        }
-
-        final ListView listview = (ListView) findViewById(R.id.listView);
-
-        final StableArrayAdapter adapter = new StableArrayAdapter(this,R.layout.listview,reminder);
-        listview.setAdapter(adapter);
-
-        listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
+        adapter = new MyAdapter(this, generateData());
+        listView = (ListView) findViewById(R.id.listView);
+        listView.setAdapter(adapter);
+        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, final View view,
-                                    int position, long id) {
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
 
+                db.updateStatus(generateData().get(position));
+                Toast.makeText(context,"Status Updated",Toast.LENGTH_LONG).show();
+                return false;
             }
-
         });
     }
 
-    private class StableArrayAdapter extends ArrayAdapter<Reminders> {
+    private ArrayList<Reminders> generateData(){
+        ArrayList<Reminders> items = new ArrayList<Reminders>();
+        String selectQuery = "SELECT  * FROM reminders";
 
-        HashMap<String, Integer> mIdMap = new HashMap<String, Integer>();
-        List<Reminders> reminders;
+        SQLiteDatabase db1 = db.getWritableDatabase();
+        Cursor cursor = db1.rawQuery(selectQuery, null);
 
-        public StableArrayAdapter(Context context, int textViewResourceId, List<Reminders> reminders) {
-            super(context, textViewResourceId,reminders);
-            this.reminders=reminders;
-
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                SimpleDateFormat sdf=new SimpleDateFormat("d/M/yyyy");
+                ParsePosition pos = new ParsePosition(0);
+                Reminders reminders = new Reminders();
+                reminders.setID(cursor.getString(0));
+                reminders.setTitle(cursor.getString(1));
+                reminders.setDescription(cursor.getString(2));
+                try {
+                    reminders.setDate(cursor.getString(3));
+                }
+                catch (Exception e)
+                {
+                    Toast.makeText(context,e.getMessage(),Toast.LENGTH_LONG).show();
+                }
+                reminders.setStatus(cursor.getString(4));
+                // Adding contact to list
+                items.add(reminders);
+            } while (cursor.moveToNext());
         }
-
-        @Override
-        public long getItemId(int position) {
-            String item = getItem(position);
-            return mIdMap.get(item);
-        }
-
-        @Override
-        public boolean hasStableIds() {
-            return true;
-        }
-
+        cursor.close();
+        Collections.sort(items, new Comparator<Reminders>()
+                {
+                    public int compare(Reminders lhs, Reminders rhs)
+                    {
+                        return lhs._date.compareTo(rhs._date);
+                    }
+                }
+        );
+        return items;
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menubar,menu);
@@ -86,13 +109,45 @@ public class todoscreen extends ActionBarActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.bt_dialog1:
-                final Dialog dialog = new Dialog(this);
-                dialog.setContentView(R.layout.dialog);
-                dialog.show();
-                break;
+            case R.id.add:
+                LayoutInflater li = LayoutInflater.from(this);
+                View promptsView = li.inflate(R.layout.dialog, null);
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+                alertDialogBuilder.setView(promptsView);
+                final EditText Title = (EditText) promptsView .findViewById(R.id.et_dialog1);
+                final EditText Description=(EditText)promptsView.findViewById(R.id.et_dialog2);
+                final DatePicker Date=(DatePicker)promptsView.findViewById(R.id.datePicker);
+                alertDialogBuilder
+                        .setCancelable(false)
+                        .setPositiveButton("Save", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                String s=String.valueOf(Date.getDayOfMonth()) + "/" + String.valueOf(Date.getMonth() + 1) + "/" + String.valueOf(Date.getYear());
+                                SimpleDateFormat sdf=new SimpleDateFormat("d/M/yyyy");
+                                ParsePosition pos = new ParsePosition(0);
+                                Reminders reminder = new Reminders();
+                                reminder._title = Title.getText().toString();
+                                reminder._description = Description.getText().toString();
+                                reminder._date = s;
+                                reminder._status = "0";
+                                db.addReminder(reminder);
+                            }
+                        })
+                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.dismiss();
+                            }
+                        });
+                alertDialogBuilder.show();
+                adapter = new MyAdapter(this, generateData());
+                listView.setAdapter(adapter);
+                return true;
+            case R.id.status:
+                Intent intent=new Intent(todoscreen.this,todoscreen2.class);
+                startActivity(intent);
+                return true;
         }
-        return super.onOptionsItemSelected(item);
+        return true;
     }
 
 }
