@@ -1,6 +1,7 @@
 package acadgild.to_do;
 
 import android.app.ActionBar;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -12,6 +13,8 @@ import android.widget.ListView;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 /**
  * Created by Tungenwar on 14/03/2015.
@@ -31,6 +34,9 @@ public class todoscreen2 extends ActionBarActivity {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 db.deleteReminder(generateData().get(position));
+                Intent intent = getIntent();
+                finish();
+                startActivity(intent);
                 return false;
             }
         });
@@ -46,8 +52,6 @@ public class todoscreen2 extends ActionBarActivity {
         // looping through all rows and adding to list
         if (cursor.moveToFirst()) {
             do {
-                SimpleDateFormat sdf=new SimpleDateFormat("dd/mm/yyyy");
-                ParsePosition pos = new ParsePosition(0);
                 Reminders reminders = new Reminders();
                 if(Integer.parseInt(cursor.getString(4))==1) {
                     reminders.setID(cursor.getString(0));
@@ -60,7 +64,13 @@ public class todoscreen2 extends ActionBarActivity {
                 }
             } while (cursor.moveToNext());
         }
-
+        cursor.close();
+        Collections.sort(items, new Comparator<Reminders>() {
+                    public int compare(Reminders lhs, Reminders rhs) {
+                        return lhs._date1.compareTo(rhs._date1);
+                    }
+                }
+        );
         return items;
     }
 }

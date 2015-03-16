@@ -30,6 +30,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -37,6 +38,14 @@ import java.util.List;
  * Created by Tungenwar on 12/03/2015.
  */
 public class todoscreen extends ActionBarActivity {
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Intent intent = getIntent();
+        finish();
+        startActivity(intent);
+    }
+
     Database db=new Database(this);
     ListView listView;
     MyAdapter adapter;
@@ -45,16 +54,18 @@ public class todoscreen extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.todolist);
-
-        adapter = new MyAdapter(this, generateData());
         listView = (ListView) findViewById(R.id.listView);
+        adapter = new MyAdapter(this, generateData());
         listView.setAdapter(adapter);
         listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-
-                db.updateStatus(generateData().get(position));
-                Toast.makeText(context,"Status Updated",Toast.LENGTH_LONG).show();
+                if(generateData().get(position)._status=="0") {
+                    db.updateStatus(generateData().get(position));
+                    Intent intent = getIntent();
+                    finish();
+                    startActivity(intent);
+                }
                 return false;
             }
         });
@@ -70,19 +81,11 @@ public class todoscreen extends ActionBarActivity {
         // looping through all rows and adding to list
         if (cursor.moveToFirst()) {
             do {
-                SimpleDateFormat sdf=new SimpleDateFormat("d/M/yyyy");
-                ParsePosition pos = new ParsePosition(0);
                 Reminders reminders = new Reminders();
                 reminders.setID(cursor.getString(0));
                 reminders.setTitle(cursor.getString(1));
                 reminders.setDescription(cursor.getString(2));
-                try {
-                    reminders.setDate(cursor.getString(3));
-                }
-                catch (Exception e)
-                {
-                    Toast.makeText(context,e.getMessage(),Toast.LENGTH_LONG).show();
-                }
+                reminders.setDate(cursor.getString(3));
                 reminders.setStatus(cursor.getString(4));
                 // Adding contact to list
                 items.add(reminders);
@@ -93,7 +96,7 @@ public class todoscreen extends ActionBarActivity {
                 {
                     public int compare(Reminders lhs, Reminders rhs)
                     {
-                        return lhs._date.compareTo(rhs._date);
+                        return lhs._date1.compareTo(rhs._date1);
                     }
                 }
         );
@@ -122,29 +125,32 @@ public class todoscreen extends ActionBarActivity {
                         .setPositiveButton("Save", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                String s=String.valueOf(Date.getDayOfMonth()) + "/" + String.valueOf(Date.getMonth() + 1) + "/" + String.valueOf(Date.getYear());
-                                SimpleDateFormat sdf=new SimpleDateFormat("d/M/yyyy");
-                                ParsePosition pos = new ParsePosition(0);
-                                Reminders reminder = new Reminders();
-                                reminder._title = Title.getText().toString();
-                                reminder._description = Description.getText().toString();
-                                reminder._date = s;
-                                reminder._status = "0";
-                                db.addReminder(reminder);
+                                if (Title.getText().toString().trim().length() == 0 || Description.getText().toString().trim().length() == 0) {
+                                    Toast.makeText(context, "Set a Title & Description", Toast.LENGTH_LONG).show();
+                                } else {
+                                    String s = String.valueOf(Date.getDayOfMonth()) + "/" + String.valueOf(Date.getMonth() + 1) + "/" + String.valueOf(Date.getYear());
+                                    Reminders reminder = new Reminders();
+                                    reminder._title = Title.getText().toString();
+                                    reminder._description = Description.getText().toString();
+                                    reminder._date = s;
+                                    reminder._status = "0";
+                                    db.addReminder(reminder);
+                                    Intent intent = getIntent();
+                                    finish();
+                                    startActivity(intent);
+                                    dialog.dismiss();
+                                }
                             }
                         })
                         .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-                                dialog.dismiss();
                             }
                         });
                 alertDialogBuilder.show();
-                adapter = new MyAdapter(this, generateData());
-                listView.setAdapter(adapter);
                 return true;
             case R.id.status:
                 Intent intent=new Intent(todoscreen.this,todoscreen2.class);
-                startActivity(intent);
+                startActivityForResult(intent, 1);
                 return true;
         }
         return true;

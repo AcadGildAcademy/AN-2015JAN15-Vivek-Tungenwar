@@ -1,5 +1,7 @@
 package acadgild.to_do;
 
+import java.text.ParsePosition;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -10,7 +12,7 @@ public class Reminders {
     //private variables
     String _id,_status;
     String _title,_description,_date;
-    //Date _date;
+    Date _date1;
 
     // Empty constructor
     public Reminders(){
@@ -67,6 +69,9 @@ public class Reminders {
     // setting phone number
     public void setDate(String date){
         this._date = date;
+        SimpleDateFormat sdf=new SimpleDateFormat("d/M/yyyy");
+        ParsePosition pos = new ParsePosition(0);
+        _date1=sdf.parse(_date,pos);
     }
 
     public String getStatus(){

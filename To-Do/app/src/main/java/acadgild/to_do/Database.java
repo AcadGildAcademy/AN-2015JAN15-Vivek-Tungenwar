@@ -78,8 +78,6 @@ public class Database extends SQLiteOpenHelper {
     // Getting single reminder
     Reminders getReminders(int id) {
         SQLiteDatabase db = this.getReadableDatabase();
-        SimpleDateFormat sdf=new SimpleDateFormat("d/m/yyyy");
-        ParsePosition pos = new ParsePosition(0);
         Cursor cursor = db.query(TABLE_REMINDERS, new String[] { KEY_ID,
                         KEY_TITLE}, KEY_ID + "=?",
                 new String[] { String.valueOf(id) }, null, null, null, null);
@@ -99,9 +97,6 @@ public class Database extends SQLiteOpenHelper {
         String selectQuery = "SELECT  * FROM " + TABLE_REMINDERS;
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
-
-        SimpleDateFormat sdf=new SimpleDateFormat("d/m/yyyy");
-        ParsePosition pos = new ParsePosition(0);
         // looping through all rows and adding to list
         if (cursor.moveToFirst()) {
             do {
