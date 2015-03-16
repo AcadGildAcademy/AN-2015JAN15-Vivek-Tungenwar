@@ -116,12 +116,13 @@ public class Database extends SQLiteOpenHelper {
     }
 
     // Updating single reminder
-    public int updateContact(Reminders contact) {
+    public int updateReminder(Reminders contact) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
         values.put(KEY_TITLE, contact.getTitle());
         values.put(KEY_DESCRIPTION, contact.getDescription());
+        values.put(KEY_DATE, contact.getDate());
 
         // updating row
         return db.update(TABLE_REMINDERS, values, KEY_ID + " = ?",

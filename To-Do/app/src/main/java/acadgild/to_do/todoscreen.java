@@ -70,7 +70,7 @@ public class todoscreen extends ActionBarActivity {
         });
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
                 Calendar cal=Calendar.getInstance();
                 cal.setTime(generateData().get(position)._date1);
                 LayoutInflater li = LayoutInflater.from(context);
@@ -93,11 +93,11 @@ public class todoscreen extends ActionBarActivity {
                                 } else {
                                     String s = String.valueOf(Date.getDayOfMonth()) + "/" + String.valueOf(Date.getMonth() + 1) + "/" + String.valueOf(Date.getYear());
                                     Reminders reminder = new Reminders();
+                                    reminder._id=generateData().get(position)._id;
                                     reminder._title = Title.getText().toString();
                                     reminder._description = Description.getText().toString();
                                     reminder._date = s;
-                                    reminder._status = "0";
-                                    db.addReminder(reminder);
+                                    db.updateReminder(reminder);
                                     Intent intent = getIntent();
                                     finish();
                                     startActivity(intent);
