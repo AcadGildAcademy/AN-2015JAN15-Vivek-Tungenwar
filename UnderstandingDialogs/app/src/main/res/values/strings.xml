@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Understanding Dialogs</string>
+    <string name="txtview">Message</string>
+    <string name="bt_dialog">Show Dialog</string>
+    <string name="bt_dialog1">Ok</string>
+    <string name="bt_dialog2">Cancel</string>
+</resources>
