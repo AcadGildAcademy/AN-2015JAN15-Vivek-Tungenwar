@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:weightSum="1">
+
+    <TextView
+        android:layout_width="166dp"
+        android:layout_height="166dp"
+        android:text="This is fragment one"
+        android:id="@+id/textView"
+        android:layout_weight="0.44"
+        android:gravity="center_vertical|center_horizontal"
+        android:textSize="@dimen/abc_text_size_menu_material"
+        android:background="#ffff1432"
+        android:textStyle="bold"
+        android:layout_gravity="center" />
+</LinearLayout>
