@@ -1,5 +1,7 @@
 package acadgild.employeerecord;
 
+import java.sql.Blob;
+
 /**
  * Created by Tungenwar on 27/03/2015.
  */
