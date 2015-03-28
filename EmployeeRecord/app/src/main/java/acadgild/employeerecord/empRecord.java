@@ -22,7 +22,7 @@ public class empRecord extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.list);
+        setContentView(R.layout.record);
         Database db = new Database(this);
         Records records=new Records("Vivek","22",getBytes(BitmapFactory.decodeResource(	getResources(), R.drawable.images)));
         db.addRecord(records);
