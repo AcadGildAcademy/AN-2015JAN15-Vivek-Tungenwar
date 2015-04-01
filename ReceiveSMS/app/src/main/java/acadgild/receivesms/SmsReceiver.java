@@ -18,6 +18,6 @@ public class SmsReceiver extends BroadcastReceiver {
         Object[] pdus = (Object[]) pudsBundle.get("pdus");
         SmsMessage messages =SmsMessage.createFromPdu((byte[]) pdus[0]);
         Main_activity m=new Main_activity();
-        Toast.makeText(m.context,messages.getDisplayMessageBody()+messages.getDisplayOriginatingAddress(),Toast.LENGTH_LONG).show();
+        Toast.makeText(m.getApplicationContext(),messages.getDisplayMessageBody()+messages.getDisplayOriginatingAddress(),Toast.LENGTH_LONG).show();
     }
 }

@@ -10,11 +10,10 @@
         </activity>
         <receiver android:name=".SmsReceiver">
             <intent-filter>
-                <action android:name="android.provider.Telephony.SMS_RECEIVED "/>
+                <action android:name="android.provider.Telephony.SMS_RECEIVED"/>
             </intent-filter>
         </receiver>
-        <uses-library android:name="android.permission.RECEIVE_SMS "/>
-
+        <uses-library android:name="android.permission.RECEIVE_SMS"/>
     </application>
 
 </manifest>
