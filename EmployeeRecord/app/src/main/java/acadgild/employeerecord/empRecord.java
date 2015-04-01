@@ -13,7 +13,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.ByteArrayOutputStream;
-import java.sql.Blob;
 import java.util.ArrayList;
 
 /**
@@ -22,23 +21,18 @@ import java.util.ArrayList;
 public class empRecord extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        try {
-            super.onCreate(savedInstanceState);
-            setContentView(R.layout.record);
-            Database db = new Database(this);
-            Records records = new Records("Vivek", "22", getBytes(BitmapFactory.decodeResource(getResources(), R.drawable.images)));
-            db.addRecord(records);
-            TextView Name = (TextView) findViewById(R.id.textView);
-            TextView Age = (TextView) findViewById(R.id.textView2);
-            ImageView image = (ImageView) findViewById(R.id.imageView);
-            records = db.getRecord(1);
-            Name.setText(records.getName());
-            Age.setText(records.getAge());
-            image.setImageBitmap(getPhoto(records.getPhoto()));
-        }
-        catch (Exception e){
-            Toast.makeText(this,e.getMessage(),Toast.LENGTH_LONG).show();
-        }
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.record);
+        Database db = new Database(this);
+        Records records=new Records("Vivek","22",getBytes(BitmapFactory.decodeResource(	getResources(), R.drawable.images)));
+        db.addRecord(records);
+        TextView Name=(TextView)findViewById(R.id.textView);
+        TextView Age = (TextView)findViewById(R.id.textView2);
+        ImageView image=(ImageView)findViewById(R.id.imageView);
+        records=db.getRecord(1);
+        Name.setText(records.getName());
+        Age.setText(records.getAge());
+        image.setImageBitmap(getPhoto(records.getPhoto()));
 }
 
     public static byte[] getBytes(Bitmap bitmap) {
