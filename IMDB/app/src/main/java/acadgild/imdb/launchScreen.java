@@ -1,10 +1,14 @@
 package acadgild.imdb;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -29,7 +33,6 @@ public class launchScreen extends ActionBarActivity {
     private static final String TAG_VOTE_COUNT= "vote_count";
     private static final String TAG_VOTE_AVERAGE= "vote_average";
     private static final String TAG_POSTER_PATH="poster_path";
-    private String mStrings[]=null;
 
     JSONArray movies = null;
 
@@ -42,6 +45,14 @@ public class launchScreen extends ActionBarActivity {
         setContentView(R.layout.launch_screen);
         movieList = new ArrayList<HashMap<String,String>>();
         lv=(ListView)findViewById(R.id.listView);
+        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Intent intent=new Intent(launchScreen.this,detailScreen.class);
+                intent.putExtra("id",movieList.get(i).get(TAG_ID));
+                startActivity(intent);
+            }
+        });
         new GetMovies().execute();
     }
 
@@ -77,8 +88,7 @@ public class launchScreen extends ActionBarActivity {
                         String popularity = c.getString(TAG_POPULARITY);
                         String vote_average = c.getString(TAG_VOTE_AVERAGE);
                         String vote_count = c.getString(TAG_VOTE_COUNT);
-                        String poster_path=c.getString(TAG_POSTER_PATH);
-                        mStrings[i]="http://image.tmdb.org/t/p/w45"+poster_path;
+                        String poster_path="http://image.tmdb.org/t/p/w45"+c.getString(TAG_POSTER_PATH);
 
                         HashMap<String, String> contact = new HashMap<String, String>();
 
@@ -88,12 +98,16 @@ public class launchScreen extends ActionBarActivity {
                         contact.put(TAG_POPULARITY, popularity);
                         contact.put(TAG_VOTE_AVERAGE, vote_average);
                         contact.put(TAG_VOTE_COUNT, vote_count);
+                        contact.put(TAG_POSTER_PATH, poster_path);
 
                         movieList.add(contact);
                     }
                 }
                 catch (JSONException e) {
                     e.printStackTrace();
+                    Toast.makeText(launchScreen.this,e.getMessage(),Toast.LENGTH_LONG).show();
+                }
+                catch (Exception e){
                     Toast.makeText(launchScreen.this,e.getMessage(),Toast.LENGTH_LONG).show();
                 }
             } else {
@@ -104,7 +118,7 @@ public class launchScreen extends ActionBarActivity {
         @Override
         protected void onPostExecute(Void result) {
             super.onPostExecute(result);
-            MyAdapter adapter=new MyAdapter(launchScreen.this,mStrings,movieList);
+            MyAdapter adapter=new MyAdapter(launchScreen.this,movieList);
             lv.setAdapter(adapter);
         }
 
@@ -114,5 +128,28 @@ public class launchScreen extends ActionBarActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menuoptions,menu);
         return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()) {
+            case R.id.mostPopular:
+                url="http://api.themoviedb.org/3/movie/popular?api_key=8496be0b2149805afa458ab8ec27560c";
+                new GetMovies().execute();
+                return true;
+            case R.id.upcomingMovies:
+                url="http://api.themoviedb.org/3/movie/upcoming?api_key=8496be0b2149805afa458ab8ec27560c";
+                new GetMovies().execute();
+                return true;
+            case R.id.nowPlaying:
+                url="http://api.themoviedb.org/3/movie/now_playing?api_key=8496be0b2149805afa458ab8ec27560c";
+                new GetMovies().execute();
+                return true;
+            case R.id.topRated:
+                url="http://api.themoviedb.org/3/movie/top_rated?api_key=8496be0b2149805afa458ab8ec27560c";
+                new GetMovies().execute();
+                return true;
+        }
+    return super.onOptionsItemSelected(item);
     }
 }

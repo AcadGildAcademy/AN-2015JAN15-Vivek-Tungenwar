@@ -20,14 +20,12 @@ import acadgild.imdb.Utils.ImageLoader;
  */
 public class MyAdapter extends BaseAdapter {
     private Activity activity;
-    private String[] data;
     private static LayoutInflater inflater=null;
     public ImageLoader imageLoader;
     private ArrayList<HashMap<String, String>> movieList=new ArrayList<HashMap<String,String>>();
 
-    public MyAdapter(Activity a, String[] d, ArrayList<HashMap<String, String>> movieList) {
+    public MyAdapter(Activity a, ArrayList<HashMap<String, String>> movieList) {
         activity = a;
-        data=d;
         this.movieList=movieList;
         inflater = (LayoutInflater)activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
@@ -35,7 +33,7 @@ public class MyAdapter extends BaseAdapter {
     }
 
     public int getCount() {
-        return data.length;
+        return movieList.size();
     }
 
     public Object getItem(int position) {
@@ -81,13 +79,11 @@ public class MyAdapter extends BaseAdapter {
 
         holder.text.setText(movieList.get(position).get("title"));
         holder.text1.setText("Release on : "+movieList.get(position).get("release_date"));
-        holder.text2.setText("Popularity :");
-        holder.ratingBar.setMax(5);
         holder.ratingBar.setRating(Float.parseFloat(movieList.get(position).get("popularity")));
-        holder.text3.setText("("+movieList.get(position).get("vote_average")+"/10)voted by "+movieList.get(position).get("vote_count")+" users");
+        holder.text3.setText("("+movieList.get(position).get("vote_average")+"/10) voted by "+movieList.get(position).get("vote_count")+" users");
         ImageView image = holder.image;
 
-        imageLoader.DisplayImage(data[position], image);
+        imageLoader.DisplayImage(movieList.get(position).get("poster_path"), image);
         return vi;
     }
 }
