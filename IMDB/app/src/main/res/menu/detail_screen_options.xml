@@ -5,7 +5,7 @@
     tools:context=".ActionBar">
     <item android:id="@+id/myFavorite"
         android:title="@string/menu7"
-        android:icon="@drawable/ic_menu_myFavorite"
+        android:icon="@drawable/ic_menu_favorite"
         app:showAsAction="ifRoom" />
     <item android:id="@+id/myWatchlist"
         android:title="@string/menu8"

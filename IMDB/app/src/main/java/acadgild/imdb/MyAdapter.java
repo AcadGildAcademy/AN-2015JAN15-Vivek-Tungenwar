@@ -51,6 +51,7 @@ public class MyAdapter extends BaseAdapter {
         public TextView text2;
         public TextView text3;
         public RatingBar ratingBar;
+        public RatingBar user_rating;
         public ImageView image;
 
     }
@@ -70,6 +71,7 @@ public class MyAdapter extends BaseAdapter {
             holder.text2=(TextView)vi.findViewById(R.id.textView3);
             holder.text3=(TextView)vi.findViewById(R.id.textView4);
             holder.ratingBar=(RatingBar)vi.findViewById(R.id.ratingBar);
+            holder.user_rating=(RatingBar)vi.findViewById(R.id.user_rating);
             holder.image=(ImageView)vi.findViewById(R.id.imageView);
 
             vi.setTag( holder );
@@ -78,7 +80,7 @@ public class MyAdapter extends BaseAdapter {
             holder=(ViewHolder)vi.getTag();
 
         holder.text.setText(movieList.get(position).get("title"));
-        holder.text1.setText("Release on : "+movieList.get(position).get("release_date"));
+        holder.text1.setText("Released on : "+movieList.get(position).get("release_date"));
         holder.ratingBar.setRating(Float.parseFloat(movieList.get(position).get("popularity")));
         holder.text3.setText("("+movieList.get(position).get("vote_average")+"/10) voted by "+movieList.get(position).get("vote_count")+" users");
         ImageView image = holder.image;
