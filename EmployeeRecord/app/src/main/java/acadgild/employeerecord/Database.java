@@ -38,7 +38,7 @@ public class Database extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         String CREATE_CONTACTS_TABLE = "CREATE TABLE " + TABLE_CONTACTS + "("
                 + KEY_ID + " INTEGER PRIMARY KEY," + KEY_NAME + " TEXT,"
-                + KEY_AGE + " TEXT," + KEY_PHOTO + "BYTE[]" + ")";
+                + KEY_AGE + " TEXT," + KEY_PHOTO + " BLOB" + ")";
         db.execSQL(CREATE_CONTACTS_TABLE);
     }
 
