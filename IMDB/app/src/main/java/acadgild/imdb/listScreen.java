@@ -20,10 +20,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
- * Created by Tungenwar on 25/04/2015.
+ * Created by Tungenwar on 23/05/2015.
  */
-public class launchScreen extends ActionBarActivity {
-
+public class listScreen extends ActionBarActivity {
     private String url = "http://api.themoviedb.org/3/movie/upcoming?api_key=8496be0b2149805afa458ab8ec27560c";
     private static final String TAG_MOVIES = "results";
     private static final String TAG_ID = "id";
@@ -38,17 +37,25 @@ public class launchScreen extends ActionBarActivity {
 
     ArrayList<HashMap<String, String>> movieList;
     ListView lv;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Bundle bundle=getIntent().getExtras();
+        Database db=new Database(this);
+        if(bundle.getString("id").equals("1")){
+            movieList=db.getFavoritesMovies();
+        }
+        else{
+            movieList=db.getWatchlistMovies();
+        }
         setContentView(R.layout.launch_screen);
         lv=(ListView)findViewById(R.id.listView);
-        new GetMovies().execute();
+        MyAdapter myAdapter=new MyAdapter(this,movieList);
+        lv.setAdapter(myAdapter);
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Intent intent=new Intent(launchScreen.this,detailScreen.class);
+                Intent intent=new Intent(listScreen.this,detailScreen.class);
                 intent.putExtra("id",movieList.get(i).get(TAG_ID));
                 startActivity(intent);
             }
@@ -100,10 +107,10 @@ public class launchScreen extends ActionBarActivity {
                 }
                 catch (JSONException e) {
                     e.printStackTrace();
-                    Toast.makeText(launchScreen.this,e.getMessage(),Toast.LENGTH_LONG).show();
+                    Toast.makeText(listScreen.this, e.getMessage(), Toast.LENGTH_LONG).show();
                 }
                 catch (Exception e){
-                    Toast.makeText(launchScreen.this,e.getMessage(),Toast.LENGTH_LONG).show();
+                    Toast.makeText(listScreen.this,e.getMessage(),Toast.LENGTH_LONG).show();
                 }
             } else {
                 Log.e("ServiceHandler", "Couldn't get any data from the url");
@@ -113,7 +120,7 @@ public class launchScreen extends ActionBarActivity {
         @Override
         protected void onPostExecute(Void result) {
             super.onPostExecute(result);
-            MyAdapter adapter=new MyAdapter(launchScreen.this,movieList);
+            MyAdapter adapter=new MyAdapter(listScreen.this,movieList);
             lv.setAdapter(adapter);
         }
 
@@ -170,10 +177,10 @@ public class launchScreen extends ActionBarActivity {
                 }
                 catch (JSONException e) {
                     e.printStackTrace();
-                    Toast.makeText(launchScreen.this,e.getMessage(),Toast.LENGTH_LONG).show();
+                    Toast.makeText(listScreen.this,e.getMessage(),Toast.LENGTH_LONG).show();
                 }
                 catch (Exception e){
-                    Toast.makeText(launchScreen.this,e.getMessage(),Toast.LENGTH_LONG).show();
+                    Toast.makeText(listScreen.this,e.getMessage(),Toast.LENGTH_LONG).show();
                 }
             } else {
                 Log.e("ServiceHandler", "Couldn't get any data from the url");
@@ -183,7 +190,7 @@ public class launchScreen extends ActionBarActivity {
         @Override
         protected void onPostExecute(Void result) {
             super.onPostExecute(result);
-            MyAdapter adapter=new MyAdapter(launchScreen.this,movieList);
+            MyAdapter adapter=new MyAdapter(listScreen.this,movieList);
             lv.setAdapter(adapter);
         }
 
@@ -218,6 +225,6 @@ public class launchScreen extends ActionBarActivity {
                 url="http://api.themoviedb.org/3/movie/latest?api_key=8496be0b2149805afa458ab8ec27560c";
                 new GetMovie().execute();
         }
-    return super.onOptionsItemSelected(item);
+        return super.onOptionsItemSelected(item);
     }
 }
