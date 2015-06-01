@@ -1,5 +1,6 @@
 package acadgild.imdb;
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -12,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,10 +34,13 @@ import acadgild.imdb.Utils.ImageLoader;
 public class detailScreen extends ActionBarActivity {
     private static String url = "http://api.themoviedb.org/3/movie/";
     private static String cast_url ;
+    private static String detail_url ;
     private static String trailer_url ;
     private static String poster_url ;
     private static final String TAG_TRAILERS = "results";
     private static final String TAG_BACKDROPS = "backdrops";
+    private static final String TAG_CAST="cast";
+    private static final String TAG_CREW="crew";
     private static final String TAG_ID = "id";
     private static final String TAG_KEY="key";
     private static final String TAG_IMDB_ID = "imdb_id";
@@ -49,9 +54,7 @@ public class detailScreen extends ActionBarActivity {
     private static final String TAG_REVENUE="revenue";
     private static final String TAG_DESCRIPTION="overview";
     private static final String TAG_TAG_LINE="tagline";
-    private static final String TAG_STATUS="STATUS";
-    private static final String TAG_CAST="cast";
-    private static final String TAG_CREW="crew";
+    private static final String TAG_STATUS="status";
     private static final String TAG_CAST_ID="cast_id";
     private static final String TAG_CHARACTER="character";
     private static final String TAG_NAME="name";
@@ -67,103 +70,159 @@ public class detailScreen extends ActionBarActivity {
     TextView status;
     TextView vote_average;
     TextView description;
+    RatingBar Popularity;
+    RatingBar user_rating;
     ImageView poster;
     ImageView favourite;
     ImageView watchlist;
     ImageLoader imageLoader;
     JSONArray casts = null;
-    Movies movie = null;
+    JSONArray crews = null;
+    JSONArray trailers = null;
+    JSONArray posters = null;
+    Context context;
+    Movies movie;
+    Bundle bundle;
 
     ArrayList<HashMap<String, String>> castList;
     ArrayList<HashMap<String, String>> trailerList;
     ArrayList<HashMap<String, String>> posterList;
     ArrayList<HashMap<String, String>> crewList;
-    List<HashMap<String, String>> movieList;
+    ArrayList<HashMap<String, String>> movieList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Bundle bundle=getIntent().getExtras();
-        url=url+bundle.getString("id")+"?api_key=8496be0b2149805afa458ab8ec27560c";
-        trailer_url=url+bundle.getString("id")+"videos?api_key=8496be0b2149805afa458ab8ec27560c";
-        poster_url=url+bundle.getString("id")+"images?api_key=8496be0b2149805afa458ab8ec27560c";
-        title=(TextView)findViewById(R.id.title);
-        tag_line=(TextView)findViewById(R.id.tag_line);
-        r_date=(TextView)findViewById(R.id.r_date);
-        budget=(TextView)findViewById(R.id.budget);
-        revenue=(TextView)findViewById(R.id.revenue);
-        status=(TextView)findViewById(R.id.status);
-        vote_average=(TextView)findViewById(R.id.vote_average);
-        description=(TextView)findViewById(R.id.description);
-        poster=(ImageView)findViewById(R.id.imageView2);
-        favourite=(ImageView)findViewById(R.id.imageView3);
-        watchlist=(ImageView)findViewById(R.id.imageView4);
-        imageLoader = new ImageLoader(this.getApplicationContext());
         setContentView(R.layout.details_screen);
-        final Database db=new Database(this);
-        movie=db.getMovies(Integer.parseInt(bundle.getString("id")));
-        changImage();
+        context=this;
+        bundle = getIntent().getExtras();
+        detail_url = url + bundle.getString("id") + "?api_key=8496be0b2149805afa458ab8ec27560c";
+        trailer_url = url + bundle.getString("id") + "/videos?api_key=8496be0b2149805afa458ab8ec27560c";
+        poster_url = url + bundle.getString("id") + "/images?api_key=8496be0b2149805afa458ab8ec27560c";
+        title = (TextView) findViewById(R.id.title);
+        tag_line = (TextView) findViewById(R.id.tag_line);
+        r_date = (TextView) findViewById(R.id.r_date);
+        budget = (TextView) findViewById(R.id.budget);
+        revenue = (TextView) findViewById(R.id.revenue);
+        status = (TextView) findViewById(R.id.status);
+        vote_average = (TextView) findViewById(R.id.vote_average);
+        description = (TextView) findViewById(R.id.description);
+        poster = (ImageView) findViewById(R.id.imageView2);
+        favourite = (ImageView) findViewById(R.id.imageView3);
+        watchlist = (ImageView) findViewById(R.id.imageView4);
+        imageLoader = new ImageLoader(this.getApplicationContext());
+        Popularity = (RatingBar) findViewById(R.id.ratingBar2);
+        user_rating = (RatingBar) findViewById(R.id.ratingBar3);
+        try {
+            checkMovie(bundle.getString("id"));
+        }
+        catch (Exception e){
+        }
         new GetDetails().execute();
-        cast_url=cast_url+movieList.get(0).get(TAG_IMDB_ID)+"credits?api_key=8496be0b2149805afa458ab8ec27560c";
         new GetCast().execute();
         new GetTrailers().execute();
         new GetPosters().execute();
+        movie = new Movies();
         favourite.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                if(movie._is_watchlist.equals("1")||movie._is_favorite.equals("1")) {
-                    db.updateFavorite(movie);
-                    changImage();
-                }
-                else{
-                    movie.setID(movieList.get(0).get(TAG_ID));
-                    movie.setTitle(movieList.get(0).get(TAG_NAME));
-                    movie.setDate(movieList.get(0).get(TAG_RELEASE_DATE));
-                    movie.setPopularity(movieList.get(0).get(TAG_POPULARITY));
-                    movie.setVoteAverage(movieList.get(0).get(TAG_VOTE_AVERAGE));
-                    movie.setVoteCount(movieList.get(0).get(TAG_VOTE_COUNT));
-                    movie.setIsFavorite("1");
-                    movie.setIsWatchlist("0");
-                    db.addMovies(movie);
-                    changImage();
-                }
-                if(movie._is_favorite.equals("0")&&movie._is_watchlist.equals("0")) {
-                    db.deleteMovies(movie);
+            public void onClick(View v) {
+                checkMovie(bundle.getString("id"));
+                Object tag =  favourite.getTag();
+                movie._id=movieList.get(0).get(TAG_ID);
+                movie._title=movieList.get(0).get(TAG_TITLE);
+                movie._poster_path=movieList.get(0).get(TAG_POSTER_PATH);
+                movie.release__date=movieList.get(0).get(TAG_RELEASE_DATE);
+                movie._vote_average=movieList.get(0).get(TAG_VOTE_AVERAGE);
+                movie._vote_count=movieList.get(0).get(TAG_VOTE_COUNT);
+                if (tag == "disable") {
+                    favourite.setImageResource(R.drawable.favorite_enable_normal);
+                    favourite.setTag("enable");
+                    movie.setIsFavorite(String.valueOf(1));
+                    Database db = new Database(detailScreen.this);
+                    boolean check = db.checkMovie(movie.getID());
+                    if (check)
+                        db.updateMovieF(movie);
+                    else
+                        db.addMovie(movie);
+                } else {
+                    favourite.setImageResource(R.drawable.favorite_disable_normal);
+                    favourite.setTag("disable");
+                    movie.setIsFavorite(String.valueOf(0));
+                    Database db = new Database(detailScreen.this);
+                    db.updateMovieF(movie);
+                    db.deleteNonFavWatchMovie();
                 }
             }
         });
+
         watchlist.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                if(movie._is_watchlist.equals("1")||movie._is_favorite.equals("1")) {
-                    db.updateFavorite(movie);
-                    changImage();
-                }
-                else{
-                    movie.setID(movieList.get(0).get(TAG_ID));
-                    movie.setTitle(movieList.get(0).get(TAG_NAME));
-                    movie.setDate(movieList.get(0).get(TAG_RELEASE_DATE));
-                    movie.setPopularity(movieList.get(0).get(TAG_POPULARITY));
-                    movie.setVoteAverage(movieList.get(0).get(TAG_VOTE_AVERAGE));
-                    movie.setVoteCount(movieList.get(0).get(TAG_VOTE_COUNT));
-                    movie.setIsFavorite("0");
-                    movie.setIsWatchlist("1");
-                    db.addMovies(movie);
-                    changImage();
-                }
-                if(movie._is_favorite.equals("0")&&movie._is_watchlist.equals("0")) {
-                    db.deleteMovies(movie);
+            public void onClick(View v) {
+                checkMovie(bundle.getString("id"));
+                Object tag = watchlist.getTag();
+                movie._id=movieList.get(0).get(TAG_ID);
+                movie._title=movieList.get(0).get(TAG_TITLE);
+                movie._poster_path=movieList.get(0).get(TAG_POSTER_PATH);
+                movie.release__date=movieList.get(0).get(TAG_RELEASE_DATE);
+                movie._vote_average=movieList.get(0).get(TAG_VOTE_AVERAGE);
+                movie._vote_count=movieList.get(0).get(TAG_VOTE_COUNT);
+                if (tag == "disable") {
+                    watchlist.setImageResource(R.drawable.watchlist_enable_normal);
+                    watchlist.setTag("enable");
+                    movie.setIsWatchlist(String.valueOf(1));
+                    Database db = new Database(detailScreen.this);
+                    boolean check = db.checkMovie(movie.getID());
+                    if (check)
+                        db.updateMovieW(movie);
+                    else
+                        db.addMovie(movie);
+                } else {
+                    watchlist.setImageResource(R.drawable.watchlist_disable_normal);
+                    watchlist.setTag("disable");
+                    movie.setIsWatchlist(String.valueOf(0));
+                    Database db = new Database(detailScreen.this);
+                    db.updateMovieW(movie);
+                    db.deleteNonFavWatchMovie();
                 }
             }
         });
     }
-    //Checks the database for movie is favorite or watchlist and
-    private void changImage(){
-        if(movie._is_favorite.equals("1"))
-            favourite.setImageResource(R.drawable.favorite_enable_normal);
-        if(movie._is_watchlist.equals("1"))
-            watchlist.setImageResource(R.drawable.watchlist_enable_normal);
+
+    private void checkMovie(String id) {
+
+        Database db = new Database(detailScreen.this);
+        db.deleteNonFavWatchMovie();
+        Boolean check = db.checkMovie(id);
+        if (!check) { //checks if movie does not existing in database
+            favourite.setImageResource(R.drawable.favorite_disable_normal);
+            favourite.setTag("disable");
+            watchlist.setImageResource(R.drawable.watchlist_disable_normal);
+            watchlist.setTag("disable");
+        } else { //if movie does exist
+            Movies movieInfo = db.getMovie(id);
+            if (movieInfo.getIsFavorite().equals("0")) { //set image based on database value
+                favourite.setImageResource(R.drawable.favorite_disable_normal);
+                favourite.setTag("disable");
+                movie.setIsFavorite(String.valueOf(0));
+
+            } else  {
+                favourite.setImageResource(R.drawable.favorite_enable_normal);
+                favourite.setTag("enable");
+                movie.setIsFavorite(String.valueOf(1));
+            }
+
+            if (movieInfo.getIsWatchlist().equals("0")) { //set image based on database value
+                watchlist.setImageResource(R.drawable.watchlist_disable_normal);
+                watchlist.setTag("disable");
+                movie.setIsWatchlist(String.valueOf(0));
+            } else {
+                watchlist.setImageResource(R.drawable.watchlist_enable_normal);
+                watchlist.setTag("enable");
+                movie.setIsWatchlist(String.valueOf(1));
+            }
+        }
     }
+
 
     private void showCasts(ArrayList<HashMap<String, String>> cast) {
         LinearLayout castsSection = (LinearLayout) findViewById(R.id.casts_section);
@@ -372,7 +431,7 @@ public class detailScreen extends ActionBarActivity {
 
         for(int i=0;i<cast.size();i++){
             Casts c=new Casts();
-            c.setProfilePath(cast.get(i).get(TAG_FILE_PATH));
+            c.setProfilePath(cast.get(i).get(TAG_ID));
 
             casts.add(c);
         }
@@ -433,6 +492,7 @@ public class detailScreen extends ActionBarActivity {
 
             castList=new ArrayList<HashMap<String, String>>();
             crewList=new ArrayList<HashMap<String, String>>();
+            cast_url = "http://api.themoviedb.org/3/movie/" + movieList.get(0).get(TAG_IMDB_ID) + "/credits?api_key=8496be0b2149805afa458ab8ec27560c";
 
             ServiceHandler sh = new ServiceHandler();
 
@@ -462,9 +522,9 @@ public class detailScreen extends ActionBarActivity {
 
                         castList.add(contact);
                     }
-                    casts = jsonObj.getJSONArray(TAG_CREW);
-                    for (int i = 0; i < casts.length(); i++) {
-                        JSONObject c = casts.getJSONObject(i);
+                    crews = jsonObj.getJSONArray(TAG_CREW);
+                    for (int i = 0; i < crews.length(); i++) {
+                        JSONObject c = crews.getJSONObject(i);
 
                         String crew_id = c.getString(TAG_CREDIT_ID);
                         String department = c.getString(TAG_DEPARTMENT);
@@ -522,11 +582,11 @@ public class detailScreen extends ActionBarActivity {
                 try {
                     JSONObject jsonObj = new JSONObject(jsonStr);
 
-                    casts = jsonObj.getJSONArray(TAG_BACKDROPS);
-                    for (int i = 0; i < casts.length(); i++) {
-                        JSONObject c = casts.getJSONObject(i);
+                    posters = jsonObj.getJSONArray(TAG_BACKDROPS);
+                    for (int i = 0; i < posters.length(); i++) {
+                        JSONObject c = posters.getJSONObject(i);
 
-                        String file_path ="http://image.tmdb.org/t/p/w45" + c.getString(TAG_FILE_PATH);
+                        String file_path ="http://image.tmdb.org/t/p/w500" + c.getString(TAG_FILE_PATH);
 
                         HashMap<String, String> contact = new HashMap<String, String>();
 
@@ -575,9 +635,9 @@ public class detailScreen extends ActionBarActivity {
                 try {
                     JSONObject jsonObj = new JSONObject(jsonStr);
 
-                    casts = jsonObj.getJSONArray(TAG_TRAILERS);
-                    for (int i = 0; i < casts.length(); i++) {
-                        JSONObject c = casts.getJSONObject(i);
+                    trailers = jsonObj.getJSONArray(TAG_TRAILERS);
+                    for (int i = 0; i < trailers.length(); i++) {
+                        JSONObject c = trailers.getJSONObject(i);
 
                         String cast_id = c.getString(TAG_ID);
                         String key = c.getString(TAG_KEY);
@@ -623,7 +683,7 @@ public class detailScreen extends ActionBarActivity {
 
             ServiceHandler sh = new ServiceHandler();
 
-            String jsonStr = sh.makeServiceCall(url, ServiceHandler.GET);
+            String jsonStr = sh.makeServiceCall(detail_url, ServiceHandler.GET);
 
             Log.d("Response: ", "> " + jsonStr);
 
@@ -642,7 +702,7 @@ public class detailScreen extends ActionBarActivity {
                     String revenue = c.getString(TAG_REVENUE);
                     String tag_line = c.getString(TAG_TAG_LINE);
                     String status = c.getString(TAG_STATUS);
-                    String poster_path="http://image.tmdb.org/t/p/w45"+c.getString(TAG_POSTER_PATH);
+                    String poster_path="http://image.tmdb.org/t/p/w500"+c.getString(TAG_POSTER_PATH);
                     String imdb_id=c.getString(TAG_IMDB_ID);
 
                     HashMap<String, String> contact = new HashMap<String, String>();
@@ -682,12 +742,13 @@ public class detailScreen extends ActionBarActivity {
             tag_line.setText(movieList.get(0).get(TAG_TAG_LINE));
             budget.setText("Budget:"+movieList.get(0).get(TAG_BUDGET));
             revenue.setText("Revenue:"+movieList.get(0).get(TAG_REVENUE));
-            status.setText("Status:"+movieList.get(0).get(TAG_STATUS));
-            vote_average.setText("("+movieList.get(0).get(TAG_VOTE_AVERAGE+"/10)\n"+movieList.get(0).get(TAG_VOTE_COUNT)+"users"));
+            Popularity.setRating(Float.parseFloat(movieList.get(0).get(TAG_VOTE_AVERAGE))/2);
+            user_rating.setRating(Float.parseFloat(movieList.get(0).get(TAG_VOTE_AVERAGE))/10);
+            status.setText("Status:" + movieList.get(0).get(TAG_STATUS));
+            vote_average.setText("(" + movieList.get(0).get(TAG_VOTE_AVERAGE) + "/10)" + movieList.get(0).get(TAG_VOTE_COUNT) + " users");
             description.setText(movieList.get(0).get(TAG_DESCRIPTION));
             imageLoader.DisplayImage(movieList.get(0).get(TAG_POSTER_PATH),poster);
         }
-
     }
 
 

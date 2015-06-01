@@ -217,6 +217,20 @@ public class launchScreen extends ActionBarActivity {
             case R.id.latestMovies:
                 url="http://api.themoviedb.org/3/movie/latest?api_key=8496be0b2149805afa458ab8ec27560c";
                 new GetMovie().execute();
+                return true;
+            case R.id.myFavorite:
+                Intent intent=new Intent(launchScreen.this,listScreen.class);
+                intent.putExtra("id","1");
+                startActivity(intent);
+                return true;
+            case R.id.myWatchlist:
+                Intent intent2=new Intent(launchScreen.this,listScreen.class);
+                intent2.putExtra("id","0");
+                startActivity(intent2);
+                return true;
+            case R.id.Refresh:
+                MyAdapter adapter=new MyAdapter(launchScreen.this,movieList);
+                lv.setAdapter(adapter);
         }
     return super.onOptionsItemSelected(item);
     }

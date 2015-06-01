@@ -5,185 +5,215 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
-/**
- * Created by Tungenwar on 20/05/2015.
- */
 public class Database extends SQLiteOpenHelper {
 
     private static final int DATABASE_VERSION = 1;
+    private static final String DATABASE_NAME = "Movie Database";
+    private static final String TABLE_MOVIEDETAILS = "Movies";
+    private static final String CREATE_TABLE = "CREATE TABLE ";
+    private static final String COLUMN_ID = "id";
+    private static final String COLUMN_TITLE = "title";
+    private static final String COLUMN_RELEASE_DATE = "release_date";
+    private static final String COLUMN_POSTER_PATH = "poster_path";
+    //private static final String COLUMN_STATUS = "status";
+    //private static final String COLUMN_BUDGET = "budget";
+    //private static final String COLUMN_REVENUE = "revenue";
+    private static final String COLUMN_VOTE_AVERAGE = "vote_average";
+    private static final String COLUMN_VOTE_COUNT = "vote_count";
+    //private static final String COLUMN_MOVIE_RAW_DETAILS = "movie raw details";
+    //private static final String COLUMN_TAGLINE = "tagline";
+    private static final String COLUMN_IS_FAVORITE = "favorite";
+    private static final String COLUMN_IS_WATCHLIST = "watchlist";
+    private static final String DATATYPE_NUMERIC = " INTEGER";
+    private static final String DATATYPE_VARCHAR = " TEXT";
+    //private static final String DATATYPE_BLOB = " BLOB";
+    private static final String OPEN_BRACE = "(";
+    private static final String COMMA = ",";
 
-    // Database Name
-    private static final String DATABASE_NAME = "TO-DO_Database";
-
-    // Contacts table name
-    private static final String TABLE_MOVIES = "movie_details";
-
-    // Contacts Table Columns names
-    private static final String KEY_ID = "id";
-    private static final String KEY_TITLE = "title";
-    private static final String KEY_RELEASE_DATE = "date";
-    private static final String KEY_POSTER_PATH = "poster_path";
-    private static final String KEY_POPULARITY = "popularity";
-    private static final String KEY_VOTE_AVERAGE = "vote_average";
-    private static final String KEY_VOTE_COUNT = "vote_count";
-    private static final String KEY_IS_FAVORITE = "is_favorite";
-    private static final String KEY_IS_WATCHLIST = "is_watchlist";
+    private static final String CREATE_TABLE_MOVIEDETAILS = new StringBuilder()
+            .append(CREATE_TABLE).append(TABLE_MOVIEDETAILS).append(OPEN_BRACE)
+            .append(COLUMN_ID).append(DATATYPE_VARCHAR + COMMA)
+            .append(COLUMN_TITLE).append(DATATYPE_VARCHAR + COMMA)
+            .append(COLUMN_RELEASE_DATE).append(DATATYPE_VARCHAR + COMMA)
+            .append(COLUMN_POSTER_PATH).append(DATATYPE_VARCHAR + COMMA)
+                    //.append(COLUMN_STATUS).append(DATATYPE_VARCHAR + COMMA)
+                    //.append(COLUMN_BUDGET).append(DATATYPE_VARCHAR + COMMA)
+                    //.append(COLUMN_REVENUE).append(DATATYPE_VARCHAR + COMMA)
+            .append(COLUMN_VOTE_AVERAGE).append(DATATYPE_VARCHAR + COMMA)
+            .append(COLUMN_VOTE_COUNT).append(DATATYPE_VARCHAR + COMMA)
+                    //.append(COLUMN_MOVIE_RAW_DETAILS).append(DATATYPE_VARCHAR + COMMA)
+                    //.append(COLUMN_TAGLINE).append(DATATYPE_VARCHAR + COMMA)
+            .append(COLUMN_IS_FAVORITE).append(DATATYPE_NUMERIC + COMMA)
+            .append(COLUMN_IS_WATCHLIST).append(DATATYPE_NUMERIC + COMMA)
+            .append("UNIQUE(").append(COLUMN_ID).append(") ON CONFLICT REPLACE)").toString();
 
     public Database(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
-    // Creating Tables
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String CREATE_CONTACTS_TABLE = "CREATE TABLE " + TABLE_MOVIES + "("
-                + KEY_ID + " INTEGER PRIMARY KEY," + KEY_TITLE + " TEXT," + KEY_POPULARITY + " TEXT"
-                + KEY_RELEASE_DATE + " TEXT," + KEY_POSTER_PATH + " TEXT," + KEY_VOTE_AVERAGE + " TEXT" +
-                KEY_VOTE_COUNT + " INTEGER"+ KEY_IS_FAVORITE + " TEXT"+ KEY_IS_WATCHLIST + " TEXT"+ ")";
-        db.execSQL(CREATE_CONTACTS_TABLE);
+
+        db.execSQL(CREATE_TABLE_MOVIEDETAILS);
     }
 
-    // Upgrading database
-    @Override
-    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+    public void addMovie(Movies movieInfo) {
 
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_MOVIES);
-        onCreate(db);
-    }
-
-    // Adding new movies
-    void addMovies(Movies movie) {
         SQLiteDatabase db = this.getWritableDatabase();
-
         ContentValues values = new ContentValues();
-        values.put(KEY_ID, movie.getID());
-        values.put(KEY_TITLE, movie.getTitle());
-        values.put(KEY_RELEASE_DATE, movie.getDate());
-        values.put(KEY_POPULARITY, movie.getPopularity());
-        values.put(KEY_POSTER_PATH, movie.getPosterPath());
-        values.put(KEY_VOTE_AVERAGE, movie.getVoteAverage());
-        values.put(KEY_VOTE_COUNT, movie.getVoteCount());
-        values.put(KEY_IS_FAVORITE, movie.getIsFavorite());
-        values.put(KEY_IS_WATCHLIST, movie.getIsWatchlist());
-
-        // Inserting Row
-        db.insert(TABLE_MOVIES, null, values);
-        db.close(); // Closing database connection
+        values.put(COLUMN_ID, movieInfo.getID());
+        values.put(COLUMN_TITLE, movieInfo.getTitle());
+        values.put(COLUMN_RELEASE_DATE, movieInfo.getDate());
+        values.put(COLUMN_POSTER_PATH, movieInfo.getPosterPath());
+        //values.put(COLUMN_STATUS, movieInfo.getStatus());
+        //values.put(COLUMN_BUDGET, movieInfo.getBudget());
+        //values.put(COLUMN_REVENUE, movieInfo.getRevenue());
+        values.put(COLUMN_VOTE_AVERAGE, movieInfo.getVoteAverage());
+        values.put(COLUMN_VOTE_COUNT, movieInfo.getVoteCount());
+        //values.put(COLUMN_MOVIE_RAW_DETAILS, movieInfo.getOverview());
+        //values.put(COLUMN_TAGLINE, movieInfo.getTagline());
+        values.put(COLUMN_IS_FAVORITE, movieInfo.getIsFavorite());
+        values.put(COLUMN_IS_WATCHLIST, movieInfo.getIsWatchlist());
+        db.insert(TABLE_MOVIEDETAILS, null, values);
+        db.close();
     }
 
-    // Getting single movie
-    Movies getMovies(int id) {
+    public Movies getMovie(String id) {
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.query(TABLE_MOVIES, new String[] { KEY_ID,
-                        KEY_TITLE}, KEY_ID + "=?",
-                new String[] { String.valueOf(id) }, null, null, null, null);
+        Cursor cursor = db.query(TABLE_MOVIEDETAILS, new String[] {COLUMN_TITLE, COLUMN_RELEASE_DATE,
+                        COLUMN_POSTER_PATH, COLUMN_VOTE_AVERAGE, COLUMN_VOTE_COUNT, COLUMN_IS_FAVORITE, COLUMN_IS_WATCHLIST}, COLUMN_ID + "=?",
+                new String[] {id}, null, null, null, null);
         if (cursor != null)
             cursor.moveToFirst();
-            Movies reminders = new Movies(cursor.getString(0),
-                    cursor.getString(7), cursor.getString(8));
-            return reminders;
-    }
-
-    // Getting All Movies
-    public ArrayList<HashMap<String, String>> getFavoritesMovies() {
-        ArrayList<HashMap<String, String>> moviesList = new ArrayList<HashMap<String, String>>();
-        // Select All Query
-        String selectQuery = "SELECT  * FROM " + TABLE_MOVIES;
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery, null);
-        // looping through all rows and adding to list
-        if (cursor.moveToFirst()) {
-            do {
-                HashMap<String, String> movies = new HashMap<String, String>();
-                if(cursor.getString(7)=="1") {
-                    movies.put("id", cursor.getString(0));
-                    movies.put("title", cursor.getString(1));
-                    movies.put("release_date", cursor.getString(2));
-                    movies.put("popularity", cursor.getString(3));
-                    movies.put("poster_path", cursor.getString(4));
-                    movies.put("vote_average", cursor.getString(5));
-                    movies.put("vote_count", cursor.getString(6));
-                }
-                // Adding contact to list
-                moviesList.add(movies);
-            } while (cursor.moveToNext());
+        Movies movieInfo = new Movies();
+        try {
+            movieInfo.setID(id);
+            movieInfo.setTitle(cursor.getString(0));
+            movieInfo.setDate(cursor.getString(1));
+            movieInfo.setPosterPath(cursor.getString(2));
+            movieInfo.setVoteAverage(cursor.getString(3));
+            movieInfo.setVoteCount(cursor.getString(4));
+            movieInfo.setIsFavorite(String.valueOf(cursor.getInt(5)));
+            movieInfo.setIsWatchlist(String.valueOf(cursor.getInt(6)));
+        }catch (Exception e){
+            detailScreen d=new detailScreen();
+            Toast.makeText(d.context,e.getMessage(),Toast.LENGTH_LONG).show();
         }
-
-        // return reminders list
-        return moviesList;
-    }
-
-    // Getting All Movies
-    public ArrayList<HashMap<String, String>> getWatchlistMovies() {
-        ArrayList<HashMap<String, String>> moviesList = new ArrayList<HashMap<String, String>>();
-        // Select All Query
-        String selectQuery = "SELECT  * FROM " + TABLE_MOVIES;
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery, null);
-        // looping through all rows and adding to list
-        if (cursor.moveToFirst()) {
-            do {
-                HashMap<String, String> movies = new HashMap<String, String>();
-                if(cursor.getString(8)=="1") {
-                    movies.put("id", cursor.getString(0));
-                    movies.put("title", cursor.getString(1));
-                    movies.put("release_date", cursor.getString(2));
-                    movies.put("popularity", cursor.getString(3));
-                    movies.put("vote_average", cursor.getString(4));
-                    movies.put("vote_count", cursor.getString(5));
-                    movies.put("poster_path", cursor.getString(6));
-                }
-                // Adding contact to list
-                moviesList.add(movies);
-            } while (cursor.moveToNext());
-        }
-
-        // return reminders list
-        return moviesList;
-    }
-
-    // Updating Status
-    public int updateFavorite(Movies movie) {
-        SQLiteDatabase db = this.getWritableDatabase();
-
-        ContentValues values = new ContentValues();
-        if(movie._is_favorite.equals("0")) {
-            values.put(KEY_IS_FAVORITE, 1);
-        }
-        else{
-            values.put(KEY_IS_FAVORITE, 0);
-        }
-
-        // updating row
-        return db.update(TABLE_MOVIES, values, KEY_ID + " = ?",
-                new String[] { String.valueOf(movie.getID()) });
-    }
-
-        // Updating Status
-    public int updateWatchlist(Movies movie) {
-        SQLiteDatabase db = this.getWritableDatabase();
-
-        ContentValues values = new ContentValues();
-        if(movie._is_watchlist.equals("0")) {
-            values.put(KEY_IS_WATCHLIST, 1);
-        }
-        else{
-            values.put(KEY_IS_WATCHLIST, 0);
-        }
-
-        // updating row
-        return db.update(TABLE_MOVIES, values, KEY_ID + " = ?",
-                new String[] { String.valueOf(movie.getID()) });
-    }
-
-     public void deleteMovies(Movies movie) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        db.delete(TABLE_MOVIES, KEY_ID + " = ?",
-                new String[] { movie.getID() });
         db.close();
+        return movieInfo;
+    }
+
+    public boolean checkMovie(String id) {
+        try {
+            SQLiteDatabase db = this.getReadableDatabase();
+            Cursor cursor = db.query(TABLE_MOVIEDETAILS, null, COLUMN_ID + "=?", new String[]{id}, null, null, null, null);
+            if (cursor.getCount() > 0)
+                return true;
+            else
+                return false;
+        }
+        catch(Exception e){
+            detailScreen d=new detailScreen();
+            Toast.makeText(d.context,e.getMessage(),Toast.LENGTH_LONG).show();
+            return false;
+        }
+    }
+
+    public void updateMovieF(Movies movieInfo) {
+        try {
+            SQLiteDatabase db = this.getWritableDatabase();
+            ContentValues values = new ContentValues();
+            values.put(COLUMN_IS_FAVORITE, movieInfo.getIsFavorite());
+            db.update(TABLE_MOVIEDETAILS, values, COLUMN_ID + "=?", new String[]{movieInfo.getID()});
+        }
+        catch(Exception e){
+            detailScreen d=new detailScreen();
+            Toast.makeText(d.context,"did not update",Toast.LENGTH_LONG).show();
+        }
+    }
+
+    public int updateMovieW(Movies movieInfo) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_IS_WATCHLIST, movieInfo.getIsWatchlist());
+        return db.update(TABLE_MOVIEDETAILS, values, COLUMN_ID + "=?", new String[] {movieInfo.getID()});
+    }
+
+    public ArrayList<HashMap<String,String>> getFavorites() {
+        ArrayList<HashMap<String,String>> allMovies = new ArrayList<HashMap<String,String>>();
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query(TABLE_MOVIEDETAILS,
+                new String[]{COLUMN_ID,COLUMN_TITLE,COLUMN_RELEASE_DATE,COLUMN_POSTER_PATH,
+                        COLUMN_VOTE_AVERAGE,COLUMN_VOTE_COUNT,COLUMN_IS_FAVORITE}
+                ,COLUMN_IS_FAVORITE+"=?",new String[]{String.valueOf(1)},null,null,null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                HashMap<String,String> movieInfo = new HashMap<String,String>();
+                movieInfo.put("id", cursor.getString(0));
+                movieInfo.put("title", cursor.getString(1));
+                movieInfo.put("release_date", cursor.getString(2));
+                movieInfo.put("poster_path", cursor.getString(3));
+                movieInfo.put("vote_average", cursor.getString(4));
+                movieInfo.put("vote_count", cursor.getString(5));
+                movieInfo.put("FAV", String.valueOf(cursor.getInt(6)));
+                if (cursor.getInt(6) == 1) {
+                    allMovies.add(movieInfo);
+                }
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return allMovies;
+    }
+
+    public ArrayList<HashMap<String,String>> getWatchList() {
+        ArrayList<HashMap<String,String>> allMovies = new ArrayList<HashMap<String,String>>();
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        try {
+            Cursor cursor = db.query(TABLE_MOVIEDETAILS,
+                    new String[]{COLUMN_ID, COLUMN_TITLE, COLUMN_RELEASE_DATE, COLUMN_POSTER_PATH,
+                            COLUMN_VOTE_AVERAGE, COLUMN_VOTE_COUNT, COLUMN_IS_WATCHLIST}
+                    , COLUMN_IS_WATCHLIST + "=?", new String[]{String.valueOf(1)}, null, null, null);
+
+            if (cursor.moveToFirst()) {
+                do {
+                    HashMap<String, String> movieInfo = new HashMap<String, String>();
+                    movieInfo.put("id", cursor.getString(0));
+                    movieInfo.put("title", cursor.getString(1));
+                    movieInfo.put("release_date", cursor.getString(2));
+                    movieInfo.put("poster_path", cursor.getString(3));
+                    movieInfo.put("vote_average", cursor.getString(4));
+                    movieInfo.put("vote_count", cursor.getString(5));
+                    movieInfo.put("WL", String.valueOf(cursor.getInt(6)));
+                    if (cursor.getInt(6) == 1) {
+                        allMovies.add(movieInfo);
+                    }
+                } while (cursor.moveToNext());
+            }
+            cursor.close();
+        }catch (Exception e){
+            detailScreen d=new detailScreen();
+            Toast.makeText(d.context,e.getMessage(),Toast.LENGTH_LONG).show();
+        }
+        return allMovies;
+    }
+
+    public void deleteNonFavWatchMovie() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(TABLE_MOVIEDETAILS, COLUMN_IS_FAVORITE + "=? AND "+COLUMN_IS_WATCHLIST+"=?", new String[] {String.valueOf(0),String.valueOf(0)});
+        db.close();
+    }
+
+    @Override
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_MOVIEDETAILS);
+        onCreate(db);
     }
 }

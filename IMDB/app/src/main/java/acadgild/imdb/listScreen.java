@@ -35,23 +35,42 @@ public class listScreen extends ActionBarActivity {
 
     JSONArray movies = null;
 
+    Database db;
     ArrayList<HashMap<String, String>> movieList;
     ListView lv;
+    Bundle bundle;
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        db=new Database(this);
+        if(bundle.getString("id").equals("1")){
+            movieList=db.getFavorites();
+        }
+        else{
+            movieList=db.getWatchList();
+        }
+
+        MyAdapter adapter=new MyAdapter(this,movieList);
+        lv.setAdapter(adapter);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Bundle bundle=getIntent().getExtras();
-        Database db=new Database(this);
+        movieList=new ArrayList<HashMap<String, String>>();
+        bundle=getIntent().getExtras();
+        db=new Database(this);
         if(bundle.getString("id").equals("1")){
-            movieList=db.getFavoritesMovies();
+            movieList=db.getFavorites();
         }
         else{
-            movieList=db.getWatchlistMovies();
+            movieList=db.getWatchList();
         }
         setContentView(R.layout.launch_screen);
         lv=(ListView)findViewById(R.id.listView);
-        MyAdapter myAdapter=new MyAdapter(this,movieList);
-        lv.setAdapter(myAdapter);
+        MyAdapter adapter=new MyAdapter(this,movieList);
+        lv.setAdapter(adapter);
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -224,6 +243,23 @@ public class listScreen extends ActionBarActivity {
             case R.id.latestMovies:
                 url="http://api.themoviedb.org/3/movie/latest?api_key=8496be0b2149805afa458ab8ec27560c";
                 new GetMovie().execute();
+            case R.id.myFavorite:
+                db=new Database(this);
+                movieList=new ArrayList<HashMap<String, String>>();
+                movieList=db.getFavorites();
+                MyAdapter adapter=new MyAdapter(this,movieList);
+                lv.setAdapter(adapter);
+                return true;
+            case R.id.myWatchlist:
+                db=new Database(this);
+                movieList=new ArrayList<HashMap<String, String>>();
+                movieList=db.getFavorites();
+                adapter=new MyAdapter(this,movieList);
+                lv.setAdapter(adapter);
+                return true;
+            case R.id.Refresh:
+                adapter=new MyAdapter(listScreen.this,movieList);
+                lv.setAdapter(adapter);
         }
         return super.onOptionsItemSelected(item);
     }

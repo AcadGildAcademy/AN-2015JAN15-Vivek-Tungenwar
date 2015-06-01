@@ -81,8 +81,9 @@ public class MyAdapter extends BaseAdapter {
 
         holder.text.setText(movieList.get(position).get("title"));
         holder.text1.setText("Released on : "+movieList.get(position).get("release_date"));
-        holder.ratingBar.setRating(Float.parseFloat(movieList.get(position).get("popularity")));
+        holder.ratingBar.setRating(Float.parseFloat(movieList.get(position).get("vote_average"))/2);
         holder.text3.setText("("+movieList.get(position).get("vote_average")+"/10) voted by "+movieList.get(position).get("vote_count")+" users");
+        holder.user_rating.setRating(Float.parseFloat(movieList.get(position).get("vote_average"))/10);
         ImageView image = holder.image;
 
         imageLoader.DisplayImage(movieList.get(position).get("poster_path"), image);

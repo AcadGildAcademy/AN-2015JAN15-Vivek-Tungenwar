@@ -17,6 +17,21 @@ public class Movies {
         this._is_favorite=is_favorite;
         this._is_watchlist=is_watchlist;
     }
+
+    public Movies(String _id, String _title, String _popularity, String release__date,
+                  String _poster_path, String _vote_average, String _vote_count, String _is_favorite, String _is_watchlist){
+        this._id = _id;
+        this._title=_title;
+        this._popularity=_popularity;
+        this.release__date=release__date;
+        this._poster_path=_poster_path;
+        this._vote_average=_vote_average;
+
+        this._vote_count=_vote_count;
+        this._is_favorite=_is_favorite;
+        this._is_watchlist=_is_watchlist;
+    }
+
     // getting ID
     public String getID(){
         return this._id;
@@ -43,16 +58,6 @@ public class Movies {
 
     public void setDate(String date){
         this.release__date = date;
-    }
-
-    // getting name
-    public String getPopularity(){
-        return this._popularity;
-    }
-
-    // setting name
-    public void setPopularity(String popularity){
-        this._popularity = popularity;
     }
 
     // getting name
